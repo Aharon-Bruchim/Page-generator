@@ -1,0 +1,31 @@
+/* Preview Layout */
+.previewLayout {
+  min-height: 100%;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.previewContent {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-section) var(--spacing-content);
+}
+
+/* Export Layout */
+.exportLayout {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height);
+}
+
+.exportContent {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-section) var(--spacing-content);
+}

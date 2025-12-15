@@ -1,0 +1,354 @@
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: var(--spacing-section) var(--spacing-content);
+  margin-bottom: var(--spacing-section);
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-background) 100%);
+  border-radius: var(--layout-border-radius);
+}
+
+.heroTitle {
+  font-family: var(--font-family-heading);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: var(--line-height-heading);
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-element) 0;
+}
+
+.heroSubtitle {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.heroTitleInput,
+.heroSubtitleInput {
+  width: 100%;
+  text-align: center;
+  background: transparent;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--layout-border-radius);
+  padding: var(--spacing-content);
+  font-family: var(--font-family-heading);
+  color: var(--color-text);
+  resize: none;
+}
+
+.heroTitleInput {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  margin-bottom: var(--spacing-element);
+}
+
+.heroSubtitleInput {
+  font-size: 1.1rem;
+}
+
+.heroTitleInput:focus,
+.heroSubtitleInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* Text Section */
+.textSection {
+  padding: var(--spacing-element) 0;
+}
+
+.textHeading {
+  font-family: var(--font-family-heading);
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  line-height: var(--line-height-heading);
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-content) 0;
+}
+
+.textContent {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height);
+  color: var(--color-text);
+}
+
+.textContent p {
+  margin: 0 0 var(--spacing-content) 0;
+}
+
+.textContent p:last-child {
+  margin-bottom: 0;
+}
+
+.textHeadingInput,
+.textContentInput {
+  width: 100%;
+  background: var(--color-background);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--layout-border-radius);
+  padding: var(--spacing-content);
+  font-family: var(--font-family);
+  color: var(--color-text);
+  resize: vertical;
+}
+
+.textHeadingInput {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-content);
+}
+
+.textContentInput {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height);
+  min-height: 120px;
+}
+
+.textHeadingInput:focus,
+.textContentInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* Image Section */
+.imageSection {
+  padding: var(--spacing-element) 0;
+  margin: 0;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  border-radius: var(--layout-border-radius);
+  display: block;
+}
+
+.imagePreviewContainer {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.imagePreview {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: var(--layout-border-radius);
+  display: block;
+}
+
+.imageRemoveBtn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.imageRemoveBtn:hover {
+  transform: scale(1.1);
+  background: #d81b60;
+}
+
+.imageUploadLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--layout-border-radius);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  background: var(--color-background-secondary);
+}
+
+.imageUploadLabel:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.imageUploadInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.imageUploadText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+}
+
+.imageUploadIcon {
+  font-size: 2.5rem;
+}
+
+.imageAltInput,
+.imageCaptionInput {
+  width: 100%;
+  margin-top: var(--spacing-content);
+  background: var(--color-background);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--layout-border-radius);
+  padding: 0.75rem var(--spacing-content);
+  font-family: var(--font-family);
+  color: var(--color-text);
+}
+
+.imageAltInput:focus,
+.imageCaptionInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.imageCaption {
+  margin-top: var(--spacing-content);
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+  font-style: italic;
+}
+
+.imagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  background: var(--color-background-secondary);
+  border-radius: var(--layout-border-radius);
+  color: var(--color-text-secondary);
+}
+
+/* Highlight Section */
+.highlight {
+  margin: var(--spacing-element) 0;
+  padding: var(--spacing-element) var(--spacing-section);
+  background: var(--color-highlight);
+  border-radius: var(--layout-border-radius);
+  border-right: 4px solid var(--color-primary);
+}
+
+.highlightContent {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  line-height: var(--line-height);
+  color: var(--color-highlight-text);
+  margin: 0;
+  font-style: italic;
+}
+
+.highlightAuthor {
+  margin-top: var(--spacing-content);
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+}
+
+.highlightContentInput,
+.highlightAuthorInput {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--layout-border-radius);
+  padding: var(--spacing-content);
+  font-family: var(--font-family);
+  color: var(--color-text);
+  resize: vertical;
+}
+
+.highlightContentInput {
+  font-size: 1.1rem;
+  font-style: italic;
+  min-height: 80px;
+  margin-bottom: var(--spacing-content);
+}
+
+.highlightAuthorInput {
+  font-size: 0.95rem;
+}
+
+.highlightContentInput:focus,
+.highlightAuthorInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* Divider Section */
+.divider {
+  border: none;
+  margin: var(--spacing-section) 0;
+}
+
+.dividerLine {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-divider), transparent);
+}
+
+.dividerDots {
+  height: 20px;
+  background: transparent;
+  position: relative;
+}
+
+.dividerDots::before {
+  content: '• • •';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--color-divider);
+  font-size: 1.5rem;
+  letter-spacing: 0.5rem;
+}
+
+.dividerSpace {
+  height: var(--spacing-section);
+  background: transparent;
+}
+
+.dividerEditor {
+  padding: var(--spacing-content) 0;
+}
+
+.dividerStyleSelector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-content);
+  margin-top: var(--spacing-content);
+}
+
+.dividerStyleLabel {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+.dividerStyleSelect {
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--layout-border-radius);
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  cursor: pointer;
+}
+
+.dividerStyleSelect:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
