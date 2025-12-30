@@ -200,6 +200,7 @@ interface DocumentContextValue {
   document: Document;
   currentPageIndex: number;
   currentPage: Page;
+  setDocument: (doc: Document) => void;
   setTitle: (title: string) => void;
   addPage: (title?: string) => void;
   removePage: (id: string) => void;
@@ -225,6 +226,7 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
       document: state.document,
       currentPageIndex: state.currentPageIndex,
       currentPage: state.document.pages[state.currentPageIndex],
+      setDocument: (doc: Document) => dispatch({ type: 'SET_DOCUMENT', payload: doc }),
       setTitle: (title: string) => dispatch({ type: 'SET_TITLE', payload: title }),
       addPage: (title?: string) => dispatch({ type: 'ADD_PAGE', payload: title }),
       removePage: (id: string) => dispatch({ type: 'REMOVE_PAGE', payload: id }),

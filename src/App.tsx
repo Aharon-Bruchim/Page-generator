@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { DocumentProvider, useDocument } from './context/DocumentContext';
-import { EditorPanel, DocumentBuilder, Preview, ExportButtons } from './components/ui';
+import { EditorPanel, DocumentBuilder, Preview, ExportButtons, DocumentsManager } from './components/ui';
 import { useTheme } from './hooks';
 import { themeToCSSVariables } from './themes';
 import './App.css';
@@ -8,6 +8,7 @@ import './App.css';
 function AppContent() {
   const { document } = useDocument();
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
+  const [showDocumentsManager, setShowDocumentsManager] = useState(false);
   const { theme } = useTheme(document.stylePreset, document.colorMode);
   const cssVars = themeToCSSVariables(theme);
 
@@ -19,9 +20,23 @@ function AppContent() {
   return (
     <div className="app">
       <header className="app-header" role="banner">
-        <h1 className="app-title">מחולל מסמכים ויזואלי</h1>
-        <p className="app-subtitle">צור מסמכים מרשימים וייצא ל-HTML ו-PDF</p>
+        <div className="app-header-content">
+          <div className="app-header-text">
+            <h1 className="app-title">מחולל מסמכים ויזואלי</h1>
+            <p className="app-subtitle">צור מסמכים מרשימים וייצא ל-HTML ו-PDF</p>
+          </div>
+          <button
+            className="documents-button"
+            onClick={() => setShowDocumentsManager(true)}
+          >
+            המסמכים שלי
+          </button>
+        </div>
       </header>
+
+      {showDocumentsManager && (
+        <DocumentsManager onClose={() => setShowDocumentsManager(false)} />
+      )}
 
       <div className="app-layout">
         <aside className="app-sidebar">

@@ -54,8 +54,37 @@ body {
 .app-header {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   padding: 1.5rem 2rem;
-  text-align: center;
   border-bottom: 1px solid #2d3748;
+}
+
+.app-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.app-header-text {
+  text-align: right;
+}
+
+.documents-button {
+  background: linear-gradient(135deg, #4cc9f0, #4361ee);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.documents-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(76, 201, 240, 0.3);
 }
 
 .app-title {
