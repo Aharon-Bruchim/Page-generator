@@ -153,8 +153,12 @@
 
 .exportButtons {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.5rem;
+}
+
+.exportButtons .exportBtn {
+  flex: 1;
 }
 
 .exportBtn {
@@ -192,6 +196,16 @@
 
 .exportBtnPDF:hover:not(:disabled) {
   background: #d81b6d;
+}
+
+.exportBtnSave {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.exportBtnSave:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
 .exportStatus {

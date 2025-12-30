@@ -18,15 +18,13 @@ interface DocumentsManagerProps {
   onClose: () => void;
   onSaveSuccess?: (documentId: string) => void;
   inline?: boolean;
+  onNewDocument?: () => void;
 }
 
-export function DocumentsManager({ onClose, onSaveSuccess, inline = false }: DocumentsManagerProps) {
+export function DocumentsManager({ onClose, inline = false, onNewDocument }: DocumentsManagerProps) {
   const [documents, setDocuments] = useState<DocumentListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [currentSha, setCurrentSha] = useState<string | null>(null);
   const [confirmState, setConfirmState] = useState<ConfirmState>({
     isOpen: false,
     title: "",
@@ -44,7 +42,6 @@ export function DocumentsManager({ onClose, onSaveSuccess, inline = false }: Doc
   const loadDocuments = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null);
       const docs = await documentsApi.list();
       setDocuments(docs);
     } catch (err) {
@@ -69,33 +66,10 @@ export function DocumentsManager({ onClose, onSaveSuccess, inline = false }: Doc
       doc.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Save current document
-  const handleSave = async () => {
-    try {
-      setSaving(true);
-      setError(null);
-      const result = await documentsApi.save(
-        currentDocument,
-        currentSha || undefined
-      );
-      setCurrentSha(result.sha);
-      await loadDocuments();
-      toast.success("המסמך נשמר בהצלחה!");
-      if (onSaveSuccess) {
-        onSaveSuccess(currentDocument.id);
-      }
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "שגיאה בשמירת המסמך");
-    } finally {
-      setSaving(false);
-    }
-  };
-
   // Load a document
   const handleLoad = async (documentId: string) => {
     try {
       setLoading(true);
-      setError(null);
       const { document, sha } = await documentsApi.get(documentId);
 
       // Convert createdAt back to Date if it's a string
@@ -105,7 +79,6 @@ export function DocumentsManager({ onClose, onSaveSuccess, inline = false }: Doc
       };
 
       setDocument(docWithDate);
-      setCurrentSha(sha);
       toast.success(`המסמך "${document.title}" נטען בהצלחה`);
       onClose();
     } catch (err) {
@@ -126,13 +99,7 @@ export function DocumentsManager({ onClose, onSaveSuccess, inline = false }: Doc
         closeConfirm();
         try {
           setLoading(true);
-          setError(null);
           await documentsApi.delete(documentId, sha);
-
-          // If we deleted the current document, reset sha
-          if (currentDocument.id === documentId) {
-            setCurrentSha(null);
-          }
 
           await loadDocuments();
           toast.success("המסמך נמחק בהצלחה");
@@ -157,7 +124,9 @@ export function DocumentsManager({ onClose, onSaveSuccess, inline = false }: Doc
       onConfirm: () => {
         closeConfirm();
         setDocument(createDocument());
-        setCurrentSha(null);
+        if (onNewDocument) {
+          onNewDocument();
+        }
         onClose();
       },
     });
@@ -166,40 +135,26 @@ export function DocumentsManager({ onClose, onSaveSuccess, inline = false }: Doc
   const content = (
     <div className={`documents-manager ${inline ? 'documents-manager-inline' : ''}`} onClick={(e) => e.stopPropagation()}>
       <header className="documents-manager-header">
-        <h2>ניהול מסמכים</h2>
-        {!inline && (
-          <button className="close-button" onClick={onClose} aria-label="סגור">
-            &times;
-          </button>
-        )}
+        <h2>המסמכים שלי</h2>
+        <button className="new-doc-btn" onClick={handleNew}>
+          + צור מסמך חדש
+        </button>
       </header>
 
-      <div className="documents-manager-actions">
-        <button
-          className="action-button save-button"
-          onClick={handleSave}
-          disabled={saving}
-        >
-          {saving ? "שומר..." : "שמור מסמך נוכחי"}
-        </button>
-        <button className="action-button new-button" onClick={handleNew}>
-          מסמך חדש
-        </button>
-      </div>
-
       <div className="documents-search">
-        <input
-          type="text"
-          placeholder="חיפוש מסמכים..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="search-input"
-        />
+        <div className="search-wrapper">
+          <input
+            type="text"
+            placeholder="חפש מסמך..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+          <span className="search-icon">&#128269;</span>
+        </div>
       </div>
 
-      {error && <div className="error-message">{error}</div>}
-
-      <div className="documents-list">
+      <div className="documents-grid">
         {loading ? (
           <div className="loading">טוען...</div>
         ) : filteredDocuments.length === 0 ? (
@@ -210,29 +165,44 @@ export function DocumentsManager({ onClose, onSaveSuccess, inline = false }: Doc
           filteredDocuments.map((doc) => (
             <div
               key={doc.path}
-              className={`document-item ${
+              className={`document-card ${
                 currentDocument.id === doc.name ? "active" : ""
               }`}
             >
-              <div className="document-info">
-                <span className="document-name">{doc.title || doc.name}</span>
+              <div className="card-icon">
+                <span>&#128196;</span>
               </div>
-              <div className="document-actions">
+              <div className="card-tag">מסמך</div>
+              <h3 className="card-title">{doc.title || doc.name}</h3>
+              <p className="card-description">מסמך שנוצר במחולל</p>
+              <div className="card-footer">
+                <span className="card-status">
+                  <span className="status-dot"></span>
+                  פעיל
+                </span>
                 <button
-                  className="doc-action-btn load-btn"
+                  className="card-action-btn"
                   onClick={() => handleLoad(doc.name)}
-                  title="פתח"
                 >
-                  פתח
+                  פתח מסמך ←
+                </button>
+              </div>
+              <div className="card-actions">
+                <button
+                  className="icon-btn edit-btn"
+                  onClick={() => handleLoad(doc.name)}
+                  title="ערוך"
+                >
+                  &#9998;
                 </button>
                 <button
-                  className="doc-action-btn delete-btn"
+                  className="icon-btn delete-btn"
                   onClick={() =>
                     handleDelete(doc.name, doc.sha, doc.title || doc.name)
                   }
                   title="מחק"
                 >
-                  מחק
+                  &#128465;
                 </button>
               </div>
             </div>

@@ -89,7 +89,7 @@ function App() {
         <div className="documents-wrapper">
           <DocumentsManager
             onClose={handleLoadDocument}
-            onSaveSuccess={handleSaveSuccess}
+            onNewDocument={() => setAppMode('builder')}
             inline={true}
           />
         </div>

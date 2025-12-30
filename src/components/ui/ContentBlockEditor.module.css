@@ -1,0 +1,276 @@
+/* Content Block Editor Styles */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Add Buttons */
+.addButtons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.addButton {
+  padding: 0.5rem 1rem;
+  background: rgba(76, 201, 240, 0.2);
+  border: 1px dashed rgba(76, 201, 240, 0.5);
+  border-radius: 6px;
+  color: #4cc9f0;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.addButton:hover {
+  background: rgba(76, 201, 240, 0.3);
+  border-style: solid;
+}
+
+/* Paste Hint */
+.pasteHint {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+/* URL Input */
+.urlInputWrapper {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.urlInput {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.urlInput:focus {
+  outline: none;
+  border-color: #4cc9f0;
+}
+
+.urlAddButton,
+.urlCancelButton {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.urlAddButton {
+  background: #4cc9f0;
+  color: #1a1a2e;
+}
+
+.urlAddButton:hover {
+  background: #7dd8f5;
+}
+
+.urlCancelButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.urlCancelButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Blocks List */
+.blocksList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-left: 4px;
+}
+
+.blocksList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.blocksList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.blocksList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.emptyState p {
+  margin: 0;
+}
+
+.emptyHint {
+  font-size: 0.8rem;
+  margin-top: 0.5rem !important;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Block Wrapper */
+.blockWrapper {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.blockWrapper:hover {
+  border-color: rgba(76, 201, 240, 0.3);
+}
+
+/* Block Actions */
+.blockActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.blockType {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #4cc9f0;
+  background: rgba(76, 201, 240, 0.2);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.blockButtons {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.actionButton {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.actionButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.actionButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.deleteButton:hover:not(:disabled) {
+  background: rgba(255, 100, 100, 0.3);
+  color: #ff6b6b;
+}
+
+/* Text Area */
+.textArea {
+  display: block;
+  width: 100%;
+  min-height: 120px;
+  padding: 0.75rem;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.textArea:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.textArea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Image Block */
+.imageBlock {
+  padding: 0.75rem;
+}
+
+.imagePreview {
+  display: block;
+  max-width: 100%;
+  max-height: 200px;
+  margin: 0 auto 0.75rem;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.imageFields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.imageInput {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.imageInput:focus {
+  outline: none;
+  border-color: #4cc9f0;
+}
+
+.imageInput::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.imagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.85rem;
+}

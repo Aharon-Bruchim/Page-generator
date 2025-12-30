@@ -32,10 +32,44 @@
 .sectionTitle {
   font-size: 0.9rem;
   font-weight: 600;
-  margin: 0 0 1rem;
+  margin: 0;
   color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.modeToggle {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 0.2rem;
+}
+
+.modeButton {
+  padding: 0.35rem 0.75rem;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modeButton:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.modeActive {
+  background: rgba(76, 201, 240, 0.3);
+  color: #fff;
 }
 
 /* Form Elements */

@@ -3,6 +3,56 @@
  * מזהה אוטומטית אלמנטים מטקסט או HTML ומייצר HTML מעוצב
  */
 
+// טיפוסים לבלוקי תוכן
+export type ContentBlockType = 'text' | 'image';
+
+export interface ContentBlock {
+  id: string;
+  type: ContentBlockType;
+  content: string; // טקסט או base64/URL לתמונה
+  alt?: string; // תיאור לתמונה
+  caption?: string; // כיתוב לתמונה
+}
+
+export function createContentBlock(type: ContentBlockType, content: string = ''): ContentBlock {
+  return {
+    id: crypto.randomUUID(),
+    type,
+    content,
+    alt: type === 'image' ? 'תמונה' : undefined,
+  };
+}
+
+// המרת בלוקי תוכן לאלמנטים מפורסים
+export function contentBlocksToElements(blocks: ContentBlock[]): ParsedElement[] {
+  const elements: ParsedElement[] = [];
+
+  for (const block of blocks) {
+    if (block.type === 'text' && block.content.trim()) {
+      // פירוס הטקסט לאלמנטים
+      const parsed = parseInput(block.content);
+      elements.push(...parsed);
+    } else if (block.type === 'image' && block.content) {
+      elements.push({
+        type: 'image',
+        content: '',
+        metadata: {
+          url: block.content,
+          alt: block.alt || 'תמונה',
+        },
+      });
+      if (block.caption) {
+        elements.push({
+          type: 'paragraph',
+          content: block.caption,
+        });
+      }
+    }
+  }
+
+  return elements;
+}
+
 export interface ParsedElement {
   type:
     | "heading"
