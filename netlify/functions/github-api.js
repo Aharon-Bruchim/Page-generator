@@ -1,7 +1,7 @@
 // Netlify Function for GitHub API operations
 // This keeps the GitHub token secure on the server side
 
-const GITHUB_REPO = 'rafi053/page-generator-docs';
+const GITHUB_REPO = 'Aharon-Bruchim/page-generator-docs';
 const GITHUB_API = 'https://api.github.com';
 const DOCUMENTS_PATH = 'documents';
 
