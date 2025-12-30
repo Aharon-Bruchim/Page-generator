@@ -3,7 +3,16 @@ import toast from 'react-hot-toast';
 import { documentsApi, DocumentListItem } from '../../services';
 import { useDocument } from '../../context/DocumentContext';
 import { Document, createDocument } from '../../types';
+import { ConfirmDialog } from './ConfirmDialog';
 import './DocumentsManager.css';
+
+interface ConfirmState {
+  isOpen: boolean;
+  title: string;
+  message: string;
+  variant: 'danger' | 'warning' | 'info';
+  onConfirm: () => void;
+}
 
 interface DocumentsManagerProps {
   onClose: () => void;
@@ -16,8 +25,17 @@ export function DocumentsManager({ onClose }: DocumentsManagerProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [saving, setSaving] = useState(false);
   const [currentSha, setCurrentSha] = useState<string | null>(null);
+  const [confirmState, setConfirmState] = useState<ConfirmState>({
+    isOpen: false,
+    title: '',
+    message: '',
+    variant: 'warning',
+    onConfirm: () => {},
+  });
 
   const { document: currentDocument, setDocument } = useDocument();
+
+  const closeConfirm = () => setConfirmState(prev => ({ ...prev, isOpen: false }));
 
   // Load documents list
   const loadDocuments = useCallback(async () => {
@@ -84,35 +102,49 @@ export function DocumentsManager({ onClose }: DocumentsManagerProps) {
   };
 
   // Delete a document
-  const handleDelete = async (documentId: string, sha: string) => {
-    if (!confirm('האם למחוק את המסמך?')) return;
+  const handleDelete = (documentId: string, sha: string, title: string) => {
+    setConfirmState({
+      isOpen: true,
+      title: 'מחיקת מסמך',
+      message: `האם למחוק את המסמך "${title}"?`,
+      variant: 'danger',
+      onConfirm: async () => {
+        closeConfirm();
+        try {
+          setLoading(true);
+          setError(null);
+          await documentsApi.delete(documentId, sha);
 
-    try {
-      setLoading(true);
-      setError(null);
-      await documentsApi.delete(documentId, sha);
+          // If we deleted the current document, reset sha
+          if (currentDocument.id === documentId) {
+            setCurrentSha(null);
+          }
 
-      // If we deleted the current document, reset sha
-      if (currentDocument.id === documentId) {
-        setCurrentSha(null);
-      }
-
-      await loadDocuments();
-      toast.success('המסמך נמחק בהצלחה');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'שגיאה במחיקת המסמך');
-    } finally {
-      setLoading(false);
-    }
+          await loadDocuments();
+          toast.success('המסמך נמחק בהצלחה');
+        } catch (err) {
+          toast.error(err instanceof Error ? err.message : 'שגיאה במחיקת המסמך');
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
   };
 
   // Create new document
   const handleNew = () => {
-    if (confirm('ליצור מסמך חדש? שינויים שלא נשמרו יאבדו.')) {
-      setDocument(createDocument());
-      setCurrentSha(null);
-      onClose();
-    }
+    setConfirmState({
+      isOpen: true,
+      title: 'מסמך חדש',
+      message: 'ליצור מסמך חדש? שינויים שלא נשמרו יאבדו.',
+      variant: 'warning',
+      onConfirm: () => {
+        closeConfirm();
+        setDocument(createDocument());
+        setCurrentSha(null);
+        onClose();
+      },
+    });
   };
 
   return (
@@ -180,7 +212,7 @@ export function DocumentsManager({ onClose }: DocumentsManagerProps) {
                   </button>
                   <button
                     className="doc-action-btn delete-btn"
-                    onClick={() => handleDelete(doc.name, doc.sha)}
+                    onClick={() => handleDelete(doc.name, doc.sha, doc.title || doc.name)}
                     title="מחק"
                   >
                     מחק
@@ -195,6 +227,17 @@ export function DocumentsManager({ onClose }: DocumentsManagerProps) {
           <small>המסמכים נשמרים ב-GitHub: rafi053/page-generator-docs</small>
         </footer>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmState.isOpen}
+        title={confirmState.title}
+        message={confirmState.message}
+        variant={confirmState.variant}
+        onConfirm={confirmState.onConfirm}
+        onCancel={closeConfirm}
+        confirmText={confirmState.variant === 'danger' ? 'מחק' : 'אישור'}
+        cancelText="ביטול"
+      />
     </div>
   );
 }
