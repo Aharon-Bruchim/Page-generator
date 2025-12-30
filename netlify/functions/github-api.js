@@ -128,7 +128,9 @@ exports.handler = async (event) => {
   }
 
   try {
-    const path = event.path.replace('/.netlify/functions/github-api', '');
+    const path = event.path
+      .replace('/.netlify/functions/github-api', '')
+      .replace('/api', '');
     const segments = path.split('/').filter(Boolean);
     const method = event.httpMethod;
 
