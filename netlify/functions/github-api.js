@@ -74,15 +74,26 @@ async function saveDocument(documentId, document, sha = null) {
   const path = `${DOCUMENTS_PATH}/${documentId}.json`;
   const content = Buffer.from(JSON.stringify(document, null, 2)).toString('base64');
 
+  // If no SHA provided, try to get it (file might already exist)
+  let fileSha = sha;
+  if (!fileSha) {
+    try {
+      const existing = await githubRequest(`/repos/${GITHUB_REPO}/contents/${path}`);
+      fileSha = existing.sha;
+    } catch (e) {
+      // File doesn't exist, that's ok - it will be created
+    }
+  }
+
   const body = {
-    message: `Update document: ${document.title || documentId}`,
+    message: `${fileSha ? 'Update' : 'Create'} document: ${document.title || documentId}`,
     content,
     branch: 'main',
   };
 
   // If we have a SHA, it's an update
-  if (sha) {
-    body.sha = sha;
+  if (fileSha) {
+    body.sha = fileSha;
   }
 
   const data = await githubRequest(`/repos/${GITHUB_REPO}/contents/${path}`, {
