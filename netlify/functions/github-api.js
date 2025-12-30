@@ -50,14 +50,9 @@ async function listDocuments() {
 
     return documents;
   } catch (error) {
-    // If directory doesn't exist or repo is empty, return empty array
-    if (error.message.includes('404') ||
-        error.message.includes('Not Found') ||
-        error.message.includes('empty') ||
-        error.message.includes('does not exist')) {
-      return [];
-    }
-    throw error;
+    // If any error occurs (directory doesn't exist, repo is empty, etc.), return empty array
+    console.log('listDocuments error:', error.message);
+    return [];
   }
 }
 
