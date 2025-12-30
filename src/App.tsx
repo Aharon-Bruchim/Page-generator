@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { DocumentProvider, useDocument } from './context/DocumentContext';
+import { useNavigate } from 'react-router-dom';
+import { useDocument } from './context/DocumentContext';
 import { EditorPanel, DocumentBuilder, Preview, ExportButtons, DocumentsManager, SmartPaste } from './components/ui';
 import { useTheme } from './hooks';
 import { themeToCSSVariables } from './themes';
 import './App.css';
 
-function AppContent() {
+type AppMode = 'builder' | 'smart' | 'documents';
+
+function App() {
   const { document } = useDocument();
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
-  const [appMode, setAppMode] = useState<'builder' | 'smart'>('builder');
-  const [showDocumentsManager, setShowDocumentsManager] = useState(false);
+  const [appMode, setAppMode] = useState<AppMode>('builder');
+  const navigate = useNavigate();
   const { theme } = useTheme(document.stylePreset, document.colorMode);
   const cssVars = themeToCSSVariables(theme);
 
@@ -19,44 +22,78 @@ function AppContent() {
     previewStyle[key] = value;
   });
 
+  const handleSaveSuccess = (documentId: string) => {
+    navigate(`/document/${documentId}`);
+  };
+
+  const handleLoadDocument = () => {
+    setAppMode('builder');
+  };
+
   return (
     <div className="app">
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            direction: 'rtl',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
+
       <header className="app-header" role="banner">
         <div className="app-header-content">
           <div className="app-header-text">
             <h1 className="app-title">מחולל מסמכים ויזואלי</h1>
-            <p className="app-subtitle">צור מסמכים מרשימים וייצא ל-HTML ו-PDF</p>
+            <p className="app-subtitle">צור מסמכים מרשימים וייצא ל-HTML</p>
           </div>
-          <div className="app-header-buttons">
-            <div className="mode-toggle">
-              <button
-                className={`mode-button ${appMode === 'builder' ? 'mode-active' : ''}`}
-                onClick={() => setAppMode('builder')}
-              >
-                🔧 בנייה ידנית
-              </button>
-              <button
-                className={`mode-button ${appMode === 'smart' ? 'mode-active' : ''}`}
-                onClick={() => setAppMode('smart')}
-              >
-                ✨ מחולל חכם
-              </button>
-            </div>
+          <nav className="app-nav">
             <button
-              className="documents-button"
-              onClick={() => setShowDocumentsManager(true)}
+              className={`nav-button ${appMode === 'smart' ? 'nav-active' : ''}`}
+              onClick={() => setAppMode('smart')}
             >
-              המסמכים שלי
+              מחולל אוטומטי
             </button>
-          </div>
+            <button
+              className={`nav-button ${appMode === 'builder' ? 'nav-active' : ''}`}
+              onClick={() => setAppMode('builder')}
+            >
+              הרגיל
+            </button>
+            <button
+              className={`nav-button ${appMode === 'documents' ? 'nav-active' : ''}`}
+              onClick={() => setAppMode('documents')}
+            >
+              המסמכים
+            </button>
+          </nav>
         </div>
       </header>
 
-      {showDocumentsManager && (
-        <DocumentsManager onClose={() => setShowDocumentsManager(false)} />
-      )}
-
-      {appMode === 'smart' ? (
+      {appMode === 'documents' ? (
+        <div className="documents-wrapper">
+          <DocumentsManager
+            onClose={handleLoadDocument}
+            onSaveSuccess={handleSaveSuccess}
+            inline={true}
+          />
+        </div>
+      ) : appMode === 'smart' ? (
         <div className="smart-paste-wrapper">
           <SmartPaste />
         </div>
@@ -117,37 +154,6 @@ function AppContent() {
         </div>
       )}
     </div>
-  );
-}
-
-function App() {
-  return (
-    <DocumentProvider>
-      <AppContent />
-      <Toaster
-        position="bottom-center"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: '#333',
-            color: '#fff',
-            direction: 'rtl',
-          },
-          success: {
-            iconTheme: {
-              primary: '#10b981',
-              secondary: '#fff',
-            },
-          },
-          error: {
-            iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
-            },
-          },
-        }}
-      />
-    </DocumentProvider>
   );
 }
 

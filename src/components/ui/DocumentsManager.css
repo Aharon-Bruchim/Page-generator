@@ -209,3 +209,10 @@
   color: #888;
   font-size: 0.75rem;
 }
+
+/* Inline mode styles */
+.documents-manager-inline {
+  max-width: 600px;
+  max-height: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}

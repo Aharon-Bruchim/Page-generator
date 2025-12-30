@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useDocument } from '../../context/DocumentContext';
 import { exportToHTML } from '../../utils/htmlExporter';
-import { exportToPDF } from '../../utils/pdfExporter';
 import styles from './ui.module.css';
 
 export function ExportButtons() {
@@ -33,28 +32,6 @@ export function ExportButtons() {
     }
   };
 
-  const handleExportPDF = async () => {
-    if (!hasContent) {
-      setExportStatus('אין סקשנים לייצא');
-      setTimeout(() => setExportStatus(null), 3000);
-      return;
-    }
-
-    setIsExporting(true);
-    setExportStatus('מייצא PDF...');
-
-    try {
-      await exportToPDF(document);
-      setExportStatus('הייצוא הושלם בהצלחה!');
-    } catch (error) {
-      setExportStatus('שגיאה בייצוא');
-      console.error('Export error:', error);
-    } finally {
-      setIsExporting(false);
-      setTimeout(() => setExportStatus(null), 3000);
-    }
-  };
-
   return (
     <div className={styles.exportSection}>
       <h3 className={styles.exportTitle}>ייצוא</h3>
@@ -67,15 +44,6 @@ export function ExportButtons() {
           aria-busy={isExporting}
         >
           📁 ייצוא HTML
-        </button>
-        <button
-          type="button"
-          className={`${styles.exportBtn} ${styles.exportBtnPDF}`}
-          onClick={handleExportPDF}
-          disabled={isExporting}
-          aria-busy={isExporting}
-        >
-          📄 ייצוא PDF
         </button>
       </div>
       {exportStatus && (

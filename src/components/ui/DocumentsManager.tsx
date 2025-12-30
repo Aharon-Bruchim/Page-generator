@@ -16,9 +16,11 @@ interface ConfirmState {
 
 interface DocumentsManagerProps {
   onClose: () => void;
+  onSaveSuccess?: (documentId: string) => void;
+  inline?: boolean;
 }
 
-export function DocumentsManager({ onClose }: DocumentsManagerProps) {
+export function DocumentsManager({ onClose, onSaveSuccess, inline = false }: DocumentsManagerProps) {
   const [documents, setDocuments] = useState<DocumentListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -79,6 +81,9 @@ export function DocumentsManager({ onClose }: DocumentsManagerProps) {
       setCurrentSha(result.sha);
       await loadDocuments();
       toast.success("המסמך נשמר בהצלחה!");
+      if (onSaveSuccess) {
+        onSaveSuccess(currentDocument.id);
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "שגיאה בשמירת המסמך");
     } finally {
@@ -158,81 +163,81 @@ export function DocumentsManager({ onClose }: DocumentsManagerProps) {
     });
   };
 
-  return (
-    <div className="documents-manager-overlay" onClick={onClose}>
-      <div className="documents-manager" onClick={(e) => e.stopPropagation()}>
-        <header className="documents-manager-header">
-          <h2>ניהול מסמכים</h2>
+  const content = (
+    <div className={`documents-manager ${inline ? 'documents-manager-inline' : ''}`} onClick={(e) => e.stopPropagation()}>
+      <header className="documents-manager-header">
+        <h2>ניהול מסמכים</h2>
+        {!inline && (
           <button className="close-button" onClick={onClose} aria-label="סגור">
             &times;
           </button>
-        </header>
+        )}
+      </header>
 
-        <div className="documents-manager-actions">
-          <button
-            className="action-button save-button"
-            onClick={handleSave}
-            disabled={saving}
-          >
-            {saving ? "שומר..." : "שמור מסמך נוכחי"}
-          </button>
-          <button className="action-button new-button" onClick={handleNew}>
-            מסמך חדש
-          </button>
-        </div>
+      <div className="documents-manager-actions">
+        <button
+          className="action-button save-button"
+          onClick={handleSave}
+          disabled={saving}
+        >
+          {saving ? "שומר..." : "שמור מסמך נוכחי"}
+        </button>
+        <button className="action-button new-button" onClick={handleNew}>
+          מסמך חדש
+        </button>
+      </div>
 
-        <div className="documents-search">
-          <input
-            type="text"
-            placeholder="חיפוש מסמכים..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-          />
-        </div>
+      <div className="documents-search">
+        <input
+          type="text"
+          placeholder="חיפוש מסמכים..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
+      </div>
 
-        {error && <div className="error-message">{error}</div>}
+      {error && <div className="error-message">{error}</div>}
 
-        <div className="documents-list">
-          {loading ? (
-            <div className="loading">טוען...</div>
-          ) : filteredDocuments.length === 0 ? (
-            <div className="empty-state">
-              {searchQuery ? "לא נמצאו מסמכים" : "אין מסמכים שמורים"}
-            </div>
-          ) : (
-            filteredDocuments.map((doc) => (
-              <div
-                key={doc.path}
-                className={`document-item ${
-                  currentDocument.id === doc.name ? "active" : ""
-                }`}
-              >
-                <div className="document-info">
-                  <span className="document-name">{doc.title || doc.name}</span>
-                </div>
-                <div className="document-actions">
-                  <button
-                    className="doc-action-btn load-btn"
-                    onClick={() => handleLoad(doc.name)}
-                    title="פתח"
-                  >
-                    פתח
-                  </button>
-                  <button
-                    className="doc-action-btn delete-btn"
-                    onClick={() =>
-                      handleDelete(doc.name, doc.sha, doc.title || doc.name)
-                    }
-                    title="מחק"
-                  >
-                    מחק
-                  </button>
-                </div>
+      <div className="documents-list">
+        {loading ? (
+          <div className="loading">טוען...</div>
+        ) : filteredDocuments.length === 0 ? (
+          <div className="empty-state">
+            {searchQuery ? "לא נמצאו מסמכים" : "אין מסמכים שמורים"}
+          </div>
+        ) : (
+          filteredDocuments.map((doc) => (
+            <div
+              key={doc.path}
+              className={`document-item ${
+                currentDocument.id === doc.name ? "active" : ""
+              }`}
+            >
+              <div className="document-info">
+                <span className="document-name">{doc.title || doc.name}</span>
               </div>
-            ))
-          )}
-        </div>
+              <div className="document-actions">
+                <button
+                  className="doc-action-btn load-btn"
+                  onClick={() => handleLoad(doc.name)}
+                  title="פתח"
+                >
+                  פתח
+                </button>
+                <button
+                  className="doc-action-btn delete-btn"
+                  onClick={() =>
+                    handleDelete(doc.name, doc.sha, doc.title || doc.name)
+                  }
+                  title="מחק"
+                >
+                  מחק
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       <ConfirmDialog
@@ -245,6 +250,16 @@ export function DocumentsManager({ onClose }: DocumentsManagerProps) {
         confirmText={confirmState.variant === "danger" ? "מחק" : "אישור"}
         cancelText="ביטול"
       />
+    </div>
+  );
+
+  if (inline) {
+    return content;
+  }
+
+  return (
+    <div className="documents-manager-overlay" onClick={onClose}>
+      {content}
     </div>
   );
 }
