@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm install:*)",
       "Bash(npm run build:*)",
-      "Bash(pgrep:*)"
+      "Bash(pgrep:*)",
+      "Bash(wc:*)"
     ]
   }
 }

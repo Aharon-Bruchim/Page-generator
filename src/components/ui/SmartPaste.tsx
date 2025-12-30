@@ -26,7 +26,7 @@ import hljs from "highlight.js";
 import "highlight.js/styles/atom-one-dark.css";
 import styles from "./SmartPaste.module.css";
 
-type StylePreset = "glassmorphism" | "cards" | "minimal" | "neon";
+type StylePreset = "aurora" | "midnight" | "sunset" | "ocean" | "forest" | "cyberpunk" | "lavender" | "monochrome" | "candy" | "coffee";
 type EditorMode = "simple" | "blocks";
 
 export function SmartPaste() {
@@ -41,7 +41,7 @@ export function SmartPaste() {
   const [pages, setPages] = useState<ParsedPage[]>([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [generatedHtml, setGeneratedHtml] = useState("");
-  const [stylePreset, setStylePreset] = useState<StylePreset>("glassmorphism");
+  const [stylePreset, setStylePreset] = useState<StylePreset>("aurora");
   const [pageTitle, setPageTitle] = useState("העמוד שלי");
   const [showCode, setShowCode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -250,18 +250,16 @@ ${generateCopyScript()}
     label: string;
     description: string;
   }[] = [
-    {
-      value: "glassmorphism",
-      label: "Glassmorphism",
-      description: "רקע שקוף עם blur וגרדיאנטים",
-    },
-    {
-      value: "cards",
-      label: "Cards Modern",
-      description: "כרטיסים מודרניים עם צללים",
-    },
-    { value: "minimal", label: "Minimal", description: "נקי ופשוט" },
-    { value: "neon", label: "Neon", description: "אפקטים זוהרים על רקע כהה" },
+    { value: "aurora", label: "Aurora", description: "זוהר צפוני עם גרדיאנטים קסומים" },
+    { value: "midnight", label: "Midnight", description: "לילה כוכבי עם סגול עמוק" },
+    { value: "sunset", label: "Sunset", description: "שקיעה חמה בכתום וורוד" },
+    { value: "ocean", label: "Ocean", description: "כחול אוקיינוס עמוק ורגוע" },
+    { value: "forest", label: "Forest", description: "ירוק טבעי ורענן" },
+    { value: "cyberpunk", label: "Cyberpunk", description: "ניאון פוטוריסטי על שחור" },
+    { value: "lavender", label: "Lavender", description: "סגלגל רך ורומנטי" },
+    { value: "monochrome", label: "Mono", description: "שחור-לבן אלגנטי" },
+    { value: "candy", label: "Candy", description: "צבעים שמחים וחיים" },
+    { value: "coffee", label: "Coffee", description: "חום קפה חם ונעים" },
   ];
 
   const exampleText = `שלום לכולם!

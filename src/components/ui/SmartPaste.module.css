@@ -227,6 +227,15 @@
   cursor: not-allowed;
 }
 
+.saveButton {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.saveButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
 /* Main Content */
 .mainContent {
   flex: 1;
@@ -281,14 +290,14 @@
 .previewContainer {
   flex: 1;
   overflow: hidden;
-  background: #fff;
+  background: #0f172a;
 }
 
 .previewIframe {
   width: 100%;
   height: 100%;
   border: none;
-  background: #fff;
+  background: #0f172a;
 }
 
 .codePreview {
