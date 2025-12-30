@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { DocumentProvider, useDocument } from './context/DocumentContext';
-import { EditorPanel, DocumentBuilder, Preview, ExportButtons, DocumentsManager } from './components/ui';
+import { EditorPanel, DocumentBuilder, Preview, ExportButtons, DocumentsManager, SmartPaste } from './components/ui';
 import { useTheme } from './hooks';
 import { themeToCSSVariables } from './themes';
 import './App.css';
@@ -9,6 +9,7 @@ import './App.css';
 function AppContent() {
   const { document } = useDocument();
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
+  const [appMode, setAppMode] = useState<'builder' | 'smart'>('builder');
   const [showDocumentsManager, setShowDocumentsManager] = useState(false);
   const { theme } = useTheme(document.stylePreset, document.colorMode);
   const cssVars = themeToCSSVariables(theme);
@@ -26,12 +27,28 @@ function AppContent() {
             <h1 className="app-title">מחולל מסמכים ויזואלי</h1>
             <p className="app-subtitle">צור מסמכים מרשימים וייצא ל-HTML ו-PDF</p>
           </div>
-          <button
-            className="documents-button"
-            onClick={() => setShowDocumentsManager(true)}
-          >
-            המסמכים שלי
-          </button>
+          <div className="app-header-buttons">
+            <div className="mode-toggle">
+              <button
+                className={`mode-button ${appMode === 'builder' ? 'mode-active' : ''}`}
+                onClick={() => setAppMode('builder')}
+              >
+                🔧 בנייה ידנית
+              </button>
+              <button
+                className={`mode-button ${appMode === 'smart' ? 'mode-active' : ''}`}
+                onClick={() => setAppMode('smart')}
+              >
+                ✨ מחולל חכם
+              </button>
+            </div>
+            <button
+              className="documents-button"
+              onClick={() => setShowDocumentsManager(true)}
+            >
+              המסמכים שלי
+            </button>
+          </div>
         </div>
       </header>
 
@@ -39,60 +56,66 @@ function AppContent() {
         <DocumentsManager onClose={() => setShowDocumentsManager(false)} />
       )}
 
-      <div className="app-layout">
-        <aside className="app-sidebar">
-          <EditorPanel />
-          <ExportButtons />
-        </aside>
+      {appMode === 'smart' ? (
+        <div className="smart-paste-wrapper">
+          <SmartPaste />
+        </div>
+      ) : (
+        <div className="app-layout">
+          <aside className="app-sidebar">
+            <EditorPanel />
+            <ExportButtons />
+          </aside>
 
-        <main className="app-main" role="main">
-          <nav className="tab-nav" role="tablist" aria-label="תצוגת מסמך">
-            <button
-              role="tab"
-              aria-selected={activeTab === 'edit'}
-              aria-controls="panel-edit"
-              id="tab-edit"
-              className={`tab-button ${activeTab === 'edit' ? 'tab-active' : ''}`}
-              onClick={() => setActiveTab('edit')}
-            >
-              ✏️ עריכה
-            </button>
-            <button
-              role="tab"
-              aria-selected={activeTab === 'preview'}
-              aria-controls="panel-preview"
-              id="tab-preview"
-              className={`tab-button ${activeTab === 'preview' ? 'tab-active' : ''}`}
-              onClick={() => setActiveTab('preview')}
-            >
-              👁️ תצוגה מקדימה
-            </button>
-          </nav>
+          <main className="app-main" role="main">
+            <nav className="tab-nav" role="tablist" aria-label="תצוגת מסמך">
+              <button
+                role="tab"
+                aria-selected={activeTab === 'edit'}
+                aria-controls="panel-edit"
+                id="tab-edit"
+                className={`tab-button ${activeTab === 'edit' ? 'tab-active' : ''}`}
+                onClick={() => setActiveTab('edit')}
+              >
+                ✏️ עריכה
+              </button>
+              <button
+                role="tab"
+                aria-selected={activeTab === 'preview'}
+                aria-controls="panel-preview"
+                id="tab-preview"
+                className={`tab-button ${activeTab === 'preview' ? 'tab-active' : ''}`}
+                onClick={() => setActiveTab('preview')}
+              >
+                👁️ תצוגה מקדימה
+              </button>
+            </nav>
 
-          <div className="tab-content">
-            <div
-              id="panel-edit"
-              role="tabpanel"
-              aria-labelledby="tab-edit"
-              hidden={activeTab !== 'edit'}
-              className="tab-panel"
-              style={previewStyle as React.CSSProperties}
-            >
-              <DocumentBuilder />
+            <div className="tab-content">
+              <div
+                id="panel-edit"
+                role="tabpanel"
+                aria-labelledby="tab-edit"
+                hidden={activeTab !== 'edit'}
+                className="tab-panel"
+                style={previewStyle as React.CSSProperties}
+              >
+                <DocumentBuilder />
+              </div>
+
+              <div
+                id="panel-preview"
+                role="tabpanel"
+                aria-labelledby="tab-preview"
+                hidden={activeTab !== 'preview'}
+                className="tab-panel tab-panel-preview"
+              >
+                <Preview />
+              </div>
             </div>
-
-            <div
-              id="panel-preview"
-              role="tabpanel"
-              aria-labelledby="tab-preview"
-              hidden={activeTab !== 'preview'}
-              className="tab-panel tab-panel-preview"
-            >
-              <Preview />
-            </div>
-          </div>
-        </main>
-      </div>
+          </main>
+        </div>
+      )}
     </div>
   );
 }

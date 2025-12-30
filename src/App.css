@@ -240,3 +240,79 @@ textarea:focus-visible {
 ::-webkit-scrollbar-thumb:hover {
   background: #718096;
 }
+
+/* Header Buttons */
+.app-header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Mode Toggle */
+.mode-toggle {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.25rem;
+}
+
+.mode-button {
+  padding: 0.6rem 1.25rem;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.mode-button:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mode-active {
+  background: linear-gradient(135deg, #4cc9f0, #4361ee);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(76, 201, 240, 0.3);
+}
+
+.mode-active:hover {
+  background: linear-gradient(135deg, #4cc9f0, #4361ee);
+}
+
+/* Smart Paste Wrapper */
+.smart-paste-wrapper {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Responsive for header buttons */
+@media (max-width: 768px) {
+  .app-header-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .app-header-text {
+    text-align: center;
+  }
+
+  .app-header-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .mode-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .documents-button {
+    width: 100%;
+  }
+}

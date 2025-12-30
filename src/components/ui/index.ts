@@ -6,3 +6,4 @@ export { ExportButtons } from './ExportButtons';
 export { PageManager } from './PageManager';
 export { DocumentsManager } from './DocumentsManager';
 export { ConfirmDialog } from './ConfirmDialog';
+export { SmartPaste } from './SmartPaste';
