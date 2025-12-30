@@ -34,19 +34,38 @@ async function githubRequest(endpoint, options = {}) {
   return response.json();
 }
 
-// List all documents
+// List all documents with titles
 async function listDocuments() {
   try {
     const data = await githubRequest(`/repos/${GITHUB_REPO}/contents/${DOCUMENTS_PATH}`);
 
-    // Filter only JSON files and extract metadata
-    const documents = data
-      .filter(file => file.name.endsWith('.json') && file.name !== 'index.json')
-      .map(file => ({
-        name: file.name.replace('.json', ''),
-        path: file.path,
-        sha: file.sha,
-      }));
+    // Filter only JSON files
+    const jsonFiles = data.filter(file => file.name.endsWith('.json') && file.name !== 'index.json');
+
+    // Fetch each document to get the title (in parallel)
+    const documents = await Promise.all(
+      jsonFiles.map(async (file) => {
+        try {
+          const fileData = await githubRequest(`/repos/${GITHUB_REPO}/contents/${file.path}`);
+          const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
+          const doc = JSON.parse(content);
+          return {
+            name: file.name.replace('.json', ''),
+            title: doc.title || file.name.replace('.json', ''),
+            path: file.path,
+            sha: file.sha,
+          };
+        } catch (e) {
+          // If we can't read the file, return just the name
+          return {
+            name: file.name.replace('.json', ''),
+            title: file.name.replace('.json', ''),
+            path: file.path,
+            sha: file.sha,
+          };
+        }
+      })
+    );
 
     return documents;
   } catch (error) {

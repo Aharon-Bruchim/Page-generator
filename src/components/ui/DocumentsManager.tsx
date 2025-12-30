@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import toast from 'react-hot-toast';
 import { documentsApi, DocumentListItem } from '../../services';
 import { useDocument } from '../../context/DocumentContext';
 import { Document, createDocument } from '../../types';
@@ -26,7 +27,7 @@ export function DocumentsManager({ onClose }: DocumentsManagerProps) {
       const docs = await documentsApi.list();
       setDocuments(docs);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load documents');
+      toast.error(err instanceof Error ? err.message : 'שגיאה בטעינת רשימת המסמכים');
     } finally {
       setLoading(false);
     }
@@ -36,8 +37,9 @@ export function DocumentsManager({ onClose }: DocumentsManagerProps) {
     loadDocuments();
   }, [loadDocuments]);
 
-  // Filter documents by search query
+  // Filter documents by search query (search in title and name)
   const filteredDocuments = documents.filter(doc =>
+    (doc.title || doc.name).toLowerCase().includes(searchQuery.toLowerCase()) ||
     doc.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -49,9 +51,9 @@ export function DocumentsManager({ onClose }: DocumentsManagerProps) {
       const result = await documentsApi.save(currentDocument, currentSha || undefined);
       setCurrentSha(result.sha);
       await loadDocuments();
-      alert('המסמך נשמר בהצלחה!');
+      toast.success('המסמך נשמר בהצלחה!');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save document');
+      toast.error(err instanceof Error ? err.message : 'שגיאה בשמירת המסמך');
     } finally {
       setSaving(false);
     }
@@ -72,9 +74,10 @@ export function DocumentsManager({ onClose }: DocumentsManagerProps) {
 
       setDocument(docWithDate);
       setCurrentSha(sha);
+      toast.success(`המסמך "${document.title}" נטען בהצלחה`);
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load document');
+      toast.error(err instanceof Error ? err.message : 'שגיאה בטעינת המסמך');
     } finally {
       setLoading(false);
     }
@@ -95,8 +98,9 @@ export function DocumentsManager({ onClose }: DocumentsManagerProps) {
       }
 
       await loadDocuments();
+      toast.success('המסמך נמחק בהצלחה');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete document');
+      toast.error(err instanceof Error ? err.message : 'שגיאה במחיקת המסמך');
     } finally {
       setLoading(false);
     }
@@ -164,7 +168,7 @@ export function DocumentsManager({ onClose }: DocumentsManagerProps) {
                 className={`document-item ${currentDocument.id === doc.name ? 'active' : ''}`}
               >
                 <div className="document-info">
-                  <span className="document-name">{doc.name}</span>
+                  <span className="document-name">{doc.title || doc.name}</span>
                 </div>
                 <div className="document-actions">
                   <button

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Toaster } from 'react-hot-toast';
 import { DocumentProvider, useDocument } from './context/DocumentContext';
 import { EditorPanel, DocumentBuilder, Preview, ExportButtons, DocumentsManager } from './components/ui';
 import { useTheme } from './hooks';
@@ -100,6 +101,29 @@ function App() {
   return (
     <DocumentProvider>
       <AppContent />
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            direction: 'rtl',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
     </DocumentProvider>
   );
 }
