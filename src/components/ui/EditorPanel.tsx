@@ -1,15 +1,16 @@
+import { useState } from 'react';
 import { useDocument } from '../../context/DocumentContext';
-import { SectionType, StylePreset } from '../../types';
+import {
+  SectionType,
+  StylePreset,
+  SectionCategory,
+  SECTION_REGISTRY,
+  CATEGORY_LABELS,
+  getSectionsByCategory,
+  getAllCategories
+} from '../../types';
 import { PageManager } from './PageManager';
 import styles from './ui.module.css';
-
-const sectionTypes: { type: SectionType; label: string; icon: string }[] = [
-  { type: 'hero', label: 'כותרת ראשית', icon: '🎯' },
-  { type: 'text', label: 'טקסט', icon: '📝' },
-  { type: 'image', label: 'תמונה', icon: '🖼️' },
-  { type: 'highlight', label: 'ציטוט', icon: '💬' },
-  { type: 'divider', label: 'מפריד', icon: '➖' },
-];
 
 const presetOptions: { value: StylePreset; label: string }[] = [
   { value: 'minimal', label: 'מינימלי' },
@@ -19,6 +20,8 @@ const presetOptions: { value: StylePreset; label: string }[] = [
 ];
 
 export function EditorPanel() {
+  const [activeCategory, setActiveCategory] = useState<SectionCategory>('basic');
+
   const {
     document,
     currentPage,
@@ -28,6 +31,9 @@ export function EditorPanel() {
     setColorMode,
     reset,
   } = useDocument();
+
+  const categories = getAllCategories();
+  const currentCategorySections = getSectionsByCategory(activeCategory);
 
   return (
     <aside className={styles.editorPanel} aria-label="עורך מסמך">
@@ -108,17 +114,34 @@ export function EditorPanel() {
         <span className={styles.editorLabel}>
           הוסף סקשן לדף: {currentPage?.title}
         </span>
-        <div className={styles.sectionButtons}>
-          {sectionTypes.map(({ type, label, icon }) => (
+
+        {/* Category tabs */}
+        <div className={styles.categoryTabs}>
+          {categories.map((cat) => (
             <button
-              key={type}
+              key={cat}
+              type="button"
+              className={`${styles.categoryTab} ${activeCategory === cat ? styles.categoryTabActive : ''}`}
+              onClick={() => setActiveCategory(cat)}
+            >
+              {CATEGORY_LABELS[cat].icon} {CATEGORY_LABELS[cat].labelHe}
+            </button>
+          ))}
+        </div>
+
+        {/* Section buttons for active category */}
+        <div className={styles.sectionButtons}>
+          {currentCategorySections.map((section) => (
+            <button
+              key={section.type}
               type="button"
               className={styles.addSectionBtn}
-              onClick={() => addSection(type)}
-              aria-label={`הוסף סקשן ${label}`}
+              onClick={() => addSection(section.type)}
+              aria-label={`הוסף סקשן ${section.labelHe}`}
+              title={section.descriptionHe}
             >
-              <span className={styles.addSectionIcon}>{icon}</span>
-              <span className={styles.addSectionLabel}>{label}</span>
+              <span className={styles.addSectionIcon}>{section.icon}</span>
+              <span className={styles.addSectionLabel}>{section.labelHe}</span>
             </button>
           ))}
         </div>

@@ -1,5 +1,16 @@
 import { createContext, useContext, useReducer, ReactNode, useMemo } from 'react';
-import { Document, Page, Section, createDocument, createPage, createSection, SectionType, StylePreset, ColorMode } from '../types';
+import {
+  Document,
+  Page,
+  Section,
+  createDocument,
+  createPage,
+  createSection,
+  SectionType,
+  StylePreset,
+  ColorMode,
+  Template
+} from '../types';
 
 interface DocumentState {
   document: Document;
@@ -20,6 +31,7 @@ type DocumentAction =
   | { type: 'MOVE_SECTION'; payload: { id: string; direction: 'up' | 'down' } }
   | { type: 'SET_STYLE_PRESET'; payload: StylePreset }
   | { type: 'SET_COLOR_MODE'; payload: ColorMode }
+  | { type: 'APPLY_TEMPLATE'; payload: { template: Template; replaceExisting: boolean } }
   | { type: 'RESET' };
 
 const initialState: DocumentState = {
@@ -188,6 +200,40 @@ function documentReducer(state: DocumentState, action: DocumentAction): Document
         document: { ...document, colorMode: action.payload },
       };
 
+    case 'APPLY_TEMPLATE': {
+      const { template, replaceExisting } = action.payload;
+
+      // Convert template pages to document pages
+      const newPages: Page[] = template.pages.map((pageConfig) => ({
+        id: crypto.randomUUID(),
+        title: pageConfig.title,
+        sections: pageConfig.sections.map((sectionConfig) =>
+          createSection(sectionConfig.type, sectionConfig.defaultData)
+        ),
+      }));
+
+      if (replaceExisting) {
+        return {
+          document: {
+            ...document,
+            title: template.nameHe,
+            pages: newPages,
+            stylePreset: template.suggestedPreset,
+            colorMode: template.suggestedColorMode,
+          },
+          currentPageIndex: 0,
+        };
+      } else {
+        return {
+          ...state,
+          document: {
+            ...document,
+            pages: [...document.pages, ...newPages],
+          },
+        };
+      }
+    }
+
     case 'RESET':
       return { document: createDocument(), currentPageIndex: 0 };
 
@@ -213,6 +259,7 @@ interface DocumentContextValue {
   moveSection: (id: string, direction: 'up' | 'down') => void;
   setStylePreset: (preset: StylePreset) => void;
   setColorMode: (mode: ColorMode) => void;
+  applyTemplate: (template: Template, replaceExisting?: boolean) => void;
   reset: () => void;
 }
 
@@ -242,6 +289,8 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
       setStylePreset: (preset: StylePreset) =>
         dispatch({ type: 'SET_STYLE_PRESET', payload: preset }),
       setColorMode: (mode: ColorMode) => dispatch({ type: 'SET_COLOR_MODE', payload: mode }),
+      applyTemplate: (template: Template, replaceExisting: boolean = true) =>
+        dispatch({ type: 'APPLY_TEMPLATE', payload: { template, replaceExisting } }),
       reset: () => dispatch({ type: 'RESET' }),
     }),
     [state.document, state.currentPageIndex]

@@ -302,6 +302,13 @@ textarea:focus-visible {
   overflow: hidden;
 }
 
+/* Templates Wrapper */
+.templates-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  background: #0f0f1a;
+}
+
 /* Responsive for header */
 @media (max-width: 768px) {
   .app-nav {

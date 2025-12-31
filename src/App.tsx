@@ -3,11 +3,12 @@ import { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useDocument } from './context/DocumentContext';
 import { EditorPanel, DocumentBuilder, Preview, ExportButtons, DocumentsManager, SmartPaste } from './components/ui';
+import { TemplateBrowser } from './components/templates';
 import { useTheme } from './hooks';
 import { themeToCSSVariables } from './themes';
 import './App.css';
 
-type AppMode = 'builder' | 'smart' | 'documents';
+type AppMode = 'builder' | 'smart' | 'documents' | 'templates';
 
 function App() {
   const { document } = useDocument();
@@ -81,6 +82,12 @@ function App() {
             >
               המסמכים
             </button>
+            <button
+              className={`nav-button ${appMode === 'templates' ? 'nav-active' : ''}`}
+              onClick={() => setAppMode('templates')}
+            >
+              תבניות
+            </button>
           </nav>
         </div>
       </header>
@@ -92,6 +99,10 @@ function App() {
             onNewDocument={() => setAppMode('builder')}
             inline={true}
           />
+        </div>
+      ) : appMode === 'templates' ? (
+        <div className="templates-wrapper">
+          <TemplateBrowser onTemplateApplied={() => setAppMode('builder')} />
         </div>
       ) : appMode === 'smart' ? (
         <div className="smart-paste-wrapper">
