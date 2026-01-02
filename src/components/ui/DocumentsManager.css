@@ -41,6 +41,11 @@
   font-weight: 600;
 }
 
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
 .new-doc-btn {
   background: linear-gradient(135deg, #4cc9f0, #4361ee);
   color: white;
@@ -56,6 +61,28 @@
 .new-doc-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 20px rgba(76, 201, 240, 0.4);
+}
+
+.upload-file-btn {
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.upload-file-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+}
+
+.upload-file-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .documents-search {
@@ -267,6 +294,28 @@
   background: rgba(239, 68, 68, 0.25);
 }
 
+/* File Card Styles */
+.file-card {
+  border-color: rgba(168, 85, 247, 0.2);
+}
+
+.file-card:hover {
+  border-color: rgba(168, 85, 247, 0.4);
+}
+
+.file-icon-bg {
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+}
+
+.file-tag {
+  background: rgba(168, 85, 247, 0.2);
+  color: #a855f7;
+}
+
+.file-dot {
+  background: #a855f7;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .documents-manager {
@@ -279,7 +328,12 @@
     align-items: stretch;
   }
 
-  .new-doc-btn {
+  .header-actions {
+    flex-direction: column;
+  }
+
+  .new-doc-btn,
+  .upload-file-btn {
     width: 100%;
   }
 

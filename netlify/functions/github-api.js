@@ -4,6 +4,7 @@
 const GITHUB_REPO = 'Aharon-Bruchim/page-generator-docs';
 const GITHUB_API = 'https://api.github.com';
 const DOCUMENTS_PATH = 'documents';
+const FILES_PATH = 'files';
 
 // Get token from environment variable
 const getToken = () => process.env.GITHUB_TOKEN;
@@ -142,6 +143,112 @@ async function deleteDocument(documentId, sha) {
   return { success: true };
 }
 
+// ============ FILE OPERATIONS ============
+
+// List all uploaded files
+async function listFiles() {
+  try {
+    const data = await githubRequest(`/repos/${GITHUB_REPO}/contents/${FILES_PATH}`);
+
+    // Filter only JSON files (metadata files)
+    const jsonFiles = data.filter(file => file.name.endsWith('.json'));
+
+    // Fetch each file metadata (in parallel)
+    const files = await Promise.all(
+      jsonFiles.map(async (file) => {
+        try {
+          const fileData = await githubRequest(`/repos/${GITHUB_REPO}/contents/${file.path}`);
+          const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
+          const metadata = JSON.parse(content);
+          return {
+            id: file.name.replace('.json', ''),
+            fileName: metadata.fileName,
+            mimeType: metadata.mimeType,
+            size: metadata.size,
+            uploadedAt: metadata.uploadedAt,
+            path: file.path,
+            sha: file.sha,
+            type: 'uploaded-file',
+          };
+        } catch (e) {
+          return null;
+        }
+      })
+    );
+
+    return files.filter(f => f !== null);
+  } catch (error) {
+    console.log('listFiles error:', error.message);
+    return [];
+  }
+}
+
+// Get a single file
+async function getFile(fileId) {
+  const path = `${FILES_PATH}/${fileId}.json`;
+  const data = await githubRequest(`/repos/${GITHUB_REPO}/contents/${path}`);
+
+  const content = Buffer.from(data.content, 'base64').toString('utf-8');
+  return {
+    file: JSON.parse(content),
+    sha: data.sha,
+  };
+}
+
+// Save/upload a file
+async function saveFile(fileId, fileData, sha = null) {
+  const path = `${FILES_PATH}/${fileId}.json`;
+  const content = Buffer.from(JSON.stringify(fileData, null, 2)).toString('base64');
+
+  // If no SHA provided, try to get it
+  let fileSha = sha;
+  if (!fileSha) {
+    try {
+      const existing = await githubRequest(`/repos/${GITHUB_REPO}/contents/${path}`);
+      fileSha = existing.sha;
+    } catch (e) {
+      // File doesn't exist
+    }
+  }
+
+  const body = {
+    message: `${fileSha ? 'Update' : 'Upload'} file: ${fileData.fileName}`,
+    content,
+    branch: 'main',
+  };
+
+  if (fileSha) {
+    body.sha = fileSha;
+  }
+
+  const data = await githubRequest(`/repos/${GITHUB_REPO}/contents/${path}`, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+  });
+
+  return {
+    sha: data.content.sha,
+    path: data.content.path,
+    id: fileId,
+  };
+}
+
+// Delete a file
+async function deleteFile(fileId, sha) {
+  const path = `${FILES_PATH}/${fileId}.json`;
+
+  await githubRequest(`/repos/${GITHUB_REPO}/contents/${path}`, {
+    method: 'DELETE',
+    body: JSON.stringify({
+      message: `Delete file: ${fileId}`,
+      sha,
+      branch: 'main',
+    }),
+  });
+
+  return { success: true };
+}
+
 // Main handler
 exports.handler = async (event) => {
   // CORS headers
@@ -202,6 +309,53 @@ exports.handler = async (event) => {
       const documentId = segments[0];
       const body = JSON.parse(event.body);
       const result = await deleteDocument(documentId, body.sha);
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(result),
+      };
+    }
+
+    // ============ FILE ROUTES ============
+
+    // Route: GET /files - List all files
+    if (method === 'GET' && segments.length === 1 && segments[0] === 'files') {
+      const files = await listFiles();
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(files),
+      };
+    }
+
+    // Route: GET /files/:id - Get a single file
+    if (method === 'GET' && segments.length === 2 && segments[0] === 'files') {
+      const fileId = segments[1];
+      const result = await getFile(fileId);
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(result),
+      };
+    }
+
+    // Route: PUT /files/:id - Upload/update a file
+    if (method === 'PUT' && segments.length === 2 && segments[0] === 'files') {
+      const fileId = segments[1];
+      const body = JSON.parse(event.body);
+      const result = await saveFile(fileId, body.file, body.sha);
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(result),
+      };
+    }
+
+    // Route: DELETE /files/:id - Delete a file
+    if (method === 'DELETE' && segments.length === 2 && segments[0] === 'files') {
+      const fileId = segments[1];
+      const body = JSON.parse(event.body);
+      const result = await deleteFile(fileId, body.sha);
       return {
         statusCode: 200,
         headers,
